@@ -1,8 +1,6 @@
+//                         sin express
+//=============================================================
 const http = require('http');
-const { readFileSync } = require('fs');
-
-// get all files
-const homePage = readFileSync('./');
 
 // la callback-fcn se ejecuta cada q el user hits el server, acupa "res.write()" en lugar de "res.end()" q tambien jalaria, "res.write()" para pasar el body
 const server = http.createServer((req, res) => {
@@ -28,3 +26,9 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(5000);
+
+/////////////////////////////    /////////////////////////////
+//               ////////////////////////////               //
+///////////////////////////// 🍑 /////////////////////////////
+//               ////////////////////////////               //
+/////////////////////////////    /////////////////////////////
