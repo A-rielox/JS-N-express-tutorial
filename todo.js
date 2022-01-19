@@ -69,8 +69,8 @@ app.listen(5000, () => {
 //                         sirviendo lo q tengo en /public
 //=============================================================
 const express = require('express');
-const path = require('path');
 const app = express();
+const path = require('path');
 
 // para q agarre todos los recursos q pide index.html de la carpeta public ( el archivo .css, .js, y el logo )
 // static hace referencia a archivos q el server no tiene q modificar
