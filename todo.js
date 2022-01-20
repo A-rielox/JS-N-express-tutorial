@@ -317,7 +317,12 @@ app.listen(5000, () => {
 //               ////////////////////////////               //
 /////////////////////////////    /////////////////////////////
 
-// middleware en otro archivo y ocupandolo en todas las rutas
+//
+//              middleware en otro archivo
+//            y ocupandolo en todas las rutas
+//=============================================================
+
+// ⭐⭐ app.use() me permite usar middleware en cualquier parte
 
 // ===============--> logger.js
 const logger = (req, res, next) => {
@@ -408,3 +413,87 @@ app.listen(5000, () => {
 ///////////////////////////// 🍑 /////////////////////////////
 //               ////////////////////////////               //
 /////////////////////////////    /////////////////////////////
+
+//
+//                 METHODS - GET
+//=============================================================
+
+const express = require('express');
+const app = express();
+let { people } = require('./data');
+
+// static assets 🔰
+app.use(express.static('./methods-public'));
+
+// parse form data 💠
+app.use(express.urlencoded({ extended: false }));
+
+app.get('/api/people', (req, res) => {
+   res.status(200).json({ success: true, data: people });
+});
+
+//   👇
+app.post('/login', (req, res) => {
+   console.log(req.body); // { name: 'hola' }
+   res.send('POST sended');
+});
+
+app.listen(5000, () => {
+   console.log('listening on port 5000...');
+});
+
+// 🔰 pa q al entrar a home ( / ) me mande a la form
+
+// 💠
+// ⭐⭐ para tener acceso a la data de la form
+// ⭐⭐ hace parse a la data y la pone en "req.body"
+// => donde se hace el POST request, voy a encontrar la data en req.body
+// { extended: false } un parametro para el método de parse, q ya practicamente todos ocupan este
+
+// la form:
+//            👇
+//<form action="/login" method="POST">
+//   <h3>Traditional Form</h3>
+//
+//   <div class="form-row">
+//      <label for="name"> enter name </label>
+//      <input type="text" name="name" id="name" autocomplete="false" />
+//   </div>
+//
+//   <button type="submit" class="block">submit</button>
+//</form>
+
+//                 ejemplo agarrando la info
+//=============================================================
+
+const express = require('express');
+const app = express();
+let { people } = require('./data');
+
+// static assets
+app.use(express.static('./methods-public'));
+
+// parse form data 💠
+app.use(express.urlencoded({ extended: false }));
+
+app.get('/api/people', (req, res) => {
+   res.status(200).json({ success: true, data: people });
+});
+
+app.post('/login', (req, res) => {
+   console.log(req.body); // { name: 'hola' }
+   const { name } = req.body;
+
+   if (name) {
+      return res.status(200).send(`Welcome ${name} `);
+   }
+
+   res.status(401).send('Please Provide Credentials');
+});
+
+app.listen(5000, () => {
+   console.log('listening on port 5000...');
+});
+
+//                 xxx
+//=============================================================
