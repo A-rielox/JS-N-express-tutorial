@@ -66,7 +66,7 @@ app.listen(5000, () => {
 /////////////////////////////    /////////////////////////////
 
 //
-//                         sirviendo lo q tengo en /public
+//               sirviendo lo q tengo en /public
 //=============================================================
 const express = require('express');
 const app = express();
@@ -91,3 +91,56 @@ app.listen(5000, () => {
 
 // __dirname -> da el path absoluto al lugar donde está ocupado
 // el resolve va a juntar todas las partes y escribe el path usando el separador del sistema
+
+/////////////////////////////    /////////////////////////////
+//               ////////////////////////////               //
+///////////////////////////// 🍑 /////////////////////////////
+//               ////////////////////////////               //
+/////////////////////////////    /////////////////////////////
+
+//
+//                         API q entrega data
+//=============================================================
+const express = require('express');
+const app = express();
+
+const { products } = require('./data');
+
+app.get('/', (req, res) => {
+   res.json(products);
+});
+
+app.listen(5000, () => {
+   console.log('listening on port 5000...');
+});
+
+/////////////////////////////    /////////////////////////////
+//               ////////////////////////////               //
+///////////////////////////// 🍑 /////////////////////////////
+//               ////////////////////////////               //
+/////////////////////////////    /////////////////////////////
+
+//
+//            limitando lo q se manda de los products
+//=============================================================
+const express = require('express');
+const app = express();
+const { products } = require('./data');
+
+app.get('/', (req, res) => {
+   res.send('<h1>Home Page</h1><a href="/api/products">products</a>');
+});
+app.get('/api/products', (req, res) => {
+   // dejando fuera la descripcion y precio
+   const newProducts = products.map(product => {
+      const { id, name, image } = product;
+
+      return { id, name, image };
+   });
+
+   res.json(newProducts);
+});
+
+app.listen(5000, () => {
+   console.log('listening on port 5000...');
+});
