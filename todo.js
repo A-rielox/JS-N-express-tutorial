@@ -76,9 +76,9 @@ const path = require('path');
 // static hace referencia a archivos q el server no tiene q modificar
 app.use(express.static('./public'));
 
-// ⭐⭐ como index.html tambien es static, se suele poner tambien en la carpeta public y no hacerlo de esta manera, sino q se aprovecha el hecho de q por default al hacer un get a '/' se pasa el archivo 'index.html' q este en public. y no se necesita poner un app.get('/',...)
+// ⭐⭐ como index.html tambien es static, se suele poner tambien en la carpeta public y no hacer "app.get('/',..." de esta manera, sino q se aprovecha el hecho de q por default al hacer un get a '/' se pasa el archivo 'index.html' q este en public. y no se necesita poner un app.get('/',...)
 // app.get('/', (req, res) => {
-//    res.sendFile(path.resolve(__dirname, './navbar-app/index.html'));
+// res.sendFile(path.resolve(__dirname, './navbar-app/index.html'));
 // });
 
 app.all('*', (req, res) => {
@@ -113,6 +113,8 @@ app.get('/', (req, res) => {
 app.listen(5000, () => {
    console.log('listening on port 5000...');
 });
+
+// The res.json() function sends a JSON response. This method sends a response (with the correct content-type) that is the parameter converted to a JSON string using the JSON.stringify() method.
 
 /////////////////////////////    /////////////////////////////
 //               ////////////////////////////               //
@@ -204,7 +206,7 @@ app.listen(5000, () => {
 /////////////////////////////    /////////////////////////////
 
 //
-//          query string params o url params
+//          query string params ( o url params )
 //=============================================================
 const express = require('express');
 const app = express();
@@ -249,6 +251,7 @@ app.get('/api/v1/query', (req, res) => {
    const { search, limit } = req.query;
 
    let sortedProducts = [...products];
+
    if (search) {
       sortedProducts = sortedProducts.filter(product => {
          return product.name.startsWith(search);
@@ -315,8 +318,8 @@ app.listen(5000, () => {
 /////////////////////////////    /////////////////////////////
 
 // middleware en otro archivo y ocupandolo en todas las rutas
-// ===============--> logger.js
 
+// ===============--> logger.js
 const logger = (req, res, next) => {
    const method = req.method;
    const url = req.url;
@@ -333,7 +336,7 @@ const express = require('express');
 const app = express();
 const logger = require('./logger');
 
-// para q se ocupe el logger en todas las rutas
+// ⭐⭐ para q se ocupe el logger en todas las rutas
 app.use(logger);
 // si se le pasa una ruta
 // app.use('/api',logger);
