@@ -359,3 +359,52 @@ app.listen(5000, () => {
 ///////////////////////////// 🍑 /////////////////////////////
 //               ////////////////////////////               //
 /////////////////////////////    /////////////////////////////
+
+//
+//                 multiple middleware fcns
+//=============================================================
+
+// ===============--> authorize.js
+// si el user pone un query-string => se autoriza, si no, nel prro
+const authorize = (req, res, next) => {
+   const { user } = req.query;
+
+   if (user === 'arielox') {
+      req.user = { name: 'arielox', id: 3 };
+      // al crear la propiedad user en "req" => puedo acceder a ella en el resto de las rutas o donde quiera ( con req.user )
+      next();
+   } else {
+      res.status(401).send('Unauthorized');
+      // estoy mandando la respuesta y x lo tanto terminando el ciclo, x eso no necesito en next() al final
+   }
+};
+
+module.exports = authorize;
+
+// ===============--> app.js
+const express = require('express');
+const app = express();
+const logger = require('./logger');
+const authorize = require('./authorize');
+
+// ⭐⭐ para ocupar todos los middlewares en todas las rutas ( se colocan en un array ), SE EJECUTAN EN EL ORDEN EN Q SE PONEN EN EL ARRAY
+app.use([logger, authorize]);
+
+app.get('/', (req, res) => {
+   res.send('Home');
+});
+
+app.get('/about', (req, res) => {
+   console.log(req.user);
+   res.send('About');
+});
+
+app.listen(5000, () => {
+   console.log('listening on port 5000...');
+});
+
+/////////////////////////////    /////////////////////////////
+//               ////////////////////////////               //
+///////////////////////////// 🍑 /////////////////////////////
+//               ////////////////////////////               //
+/////////////////////////////    /////////////////////////////
