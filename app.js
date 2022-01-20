@@ -1,5 +1,6 @@
 //
 //                   otto ( ejemplo )
+//                 PUT - DELETE + postman
 //=============================================================
 
 const express = require('express');
@@ -59,16 +60,19 @@ app.post('/login', (req, res) => {
    res.status(401).send('Please Provide Credentials');
 });
 
-// PUT para modificar
+// 📌 PUT para modificar
+// la convención es hacerlo con un route parameters
+// recordar el req.params se saca altiro, el req.body hay q usar 💠 ó 💥 de arriba
 app.put('/api/people/:id', (req, res) => {
    const { id } = req.params;
    const { name } = req.body;
 
    const person = people.find(person => person.id === Number(id));
+
    if (!person) {
       return res.status(404).json({
          success: false,
-         msg: 'please provide a name value',
+         msg: `We could not find any person with id: ${id}`,
       });
    }
 
@@ -80,6 +84,23 @@ app.put('/api/people/:id', (req, res) => {
    });
 
    res.status(200).json({ success: true, data: newPerson });
+});
+
+// 📌 DELETE la misma convencion q con PUT y el setup es muy similar, pero no se espera algo en el body
+app.delete('/api/people/:id', (req, res) => {
+   const person = people.find(person => person.id === Number(req.params.id));
+
+   if (!person) {
+      return res.status(404).json({
+         success: false,
+         msg: `We could not find any person with id: ${req.params.id}`,
+      });
+   }
+
+   const newPeople = people.filter(
+      person => person.id !== Number(req.params.id)
+   );
+   return res.status(200).json({ success: true, data: newPeople });
 });
 
 app.listen(5000, () => {
@@ -96,7 +117,7 @@ app.listen(5000, () => {
 //
 //    SI SE MANEJA CON JAVASCRIPT:
 //       "app.use(express.json());" 💥
-
+//
 // 💠
 // para tener acceso a la data de la form
 // ⭐⭐ hace parse a la data y la pone en "req.body"
