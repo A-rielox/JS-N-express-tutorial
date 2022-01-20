@@ -73,6 +73,7 @@
          const btn = document.querySelector('.submit-btn');
          const input = document.querySelector('.form-input');
          const formAlert = document.querySelector('.form-alert');
+
          btn.addEventListener('click', async e => {
             e.preventDefault();
             const nameValue = input.value;
@@ -81,8 +82,10 @@
                const { data } = await axios.post('/api/people', {
                   name: nameValue,
                });
+
                const h5 = document.createElement('h5');
                h5.textContent = data.person;
+               // esta data es la q mando desde mi app como respuesta al post y es "{ success: true, person: name }"
                result.appendChild(h5);
             } catch (error) {
                // console.log(error.response)
