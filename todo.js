@@ -510,7 +510,7 @@ app.use(express.static('./methods-public'));
 // parse form data 💠
 app.use(express.urlencoded({ extended: false }));
 
-// parse json 💥
+// parse form json 💥
 app.use(express.json());
 
 app.get('/api/people', (req, res) => {
