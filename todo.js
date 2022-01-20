@@ -144,3 +144,215 @@ app.get('/api/products', (req, res) => {
 app.listen(5000, () => {
    console.log('listening on port 5000...');
 });
+
+/////////////////////////////    /////////////////////////////
+//               ////////////////////////////               //
+///////////////////////////// 🍑 /////////////////////////////
+//               ////////////////////////////               //
+/////////////////////////////    /////////////////////////////
+
+//
+//     route parameters ( manda un producto en específico )
+//=============================================================
+const express = require('express');
+const app = express();
+const { products } = require('./data');
+
+app.get('/', (req, res) => {
+   res.send('<h1>Home Page</h1><a href="/api/products">products</a>');
+});
+
+// dejando fuera la descripcion y precio
+app.get('/api/products', (req, res) => {
+   const newProducts = products.map(product => {
+      const { id, name, image } = product;
+
+      return { id, name, image };
+   });
+
+   res.json(newProducts);
+});
+
+// filtrando por producto
+app.get('/api/products/:productID', (req, res) => {
+   console.log(req.params); // { productID: '1' }
+   const { productID: id } = req.params;
+
+   const singleProduct = products.find(product => {
+      return product.id === Number(id);
+   });
+
+   // x si ingresan una id q no tiene sentido
+   if (!singleProduct) {
+      return res.status(404).send('Product not found');
+   }
+
+   return res.json(singleProduct);
+});
+
+app.listen(5000, () => {
+   console.log('listening on port 5000...');
+});
+
+// en el url paso "http://localhost:5000/api/products/1"
+// en req.params esta "{ productID: '1' }"
+
+/////////////////////////////    /////////////////////////////
+//               ////////////////////////////               //
+///////////////////////////// 🍑 /////////////////////////////
+//               ////////////////////////////               //
+/////////////////////////////    /////////////////////////////
+
+//
+//          query string params o url params
+//=============================================================
+const express = require('express');
+const app = express();
+const { products } = require('./data');
+
+app.get('/', (req, res) => {
+   res.send('<h1>Home Page</h1><a href="/api/products">products</a>');
+});
+
+// dejando fuera la descripcion y precio
+app.get('/api/products', (req, res) => {
+   const newProducts = products.map(product => {
+      const { id, name, image } = product;
+
+      return { id, name, image };
+   });
+
+   res.json(newProducts);
+});
+
+// filtrando por producto
+app.get('/api/products/:productID', (req, res) => {
+   console.log(req.params); // { productID: '1' }
+   const { productID: id } = req.params;
+
+   const singleProduct = products.find(product => {
+      return product.id === Number(id);
+   });
+
+   // x si ingresan una id q no tiene sentido
+   if (!singleProduct) {
+      return res.status(404).send('Product not found');
+   }
+
+   return res.json(singleProduct);
+});
+
+//                                     👇
+// meto http://localhost:5000/api/v1/query?search=a&limit=2
+app.get('/api/v1/query', (req, res) => {
+   console.log(req.query); // { search: 'a', limit: '2' }
+   const { search, limit } = req.query;
+
+   let sortedProducts = [...products];
+   if (search) {
+      sortedProducts = sortedProducts.filter(product => {
+         return product.name.startsWith(search);
+      });
+   }
+   if (limit) {
+      sortedProducts = sortedProducts.slice(0, Number(limit));
+   }
+   // si el filtro devuelve nada ( como prod q empieze con x )
+   if (sortedProducts.length < 1) {
+      return res.status(200).send('No products matched your search');
+   }
+
+   return res.status(200).json(sortedProducts);
+});
+
+app.listen(5000, () => {
+   console.log('listening on port 5000...');
+});
+
+/////////////////////////////    /////////////////////////////
+//               ////////////////////////////               //
+///////////////////////////// 🍑 /////////////////////////////
+//               ////////////////////////////               //
+/////////////////////////////    /////////////////////////////
+
+//
+//                         middleware
+//=============================================================
+const express = require('express');
+const app = express();
+
+// req => middleware => res
+
+// hay q poner el next, para pasar al sig middleware, a no ser q se termine el ciclo mandando la response
+//      👇
+const logger = (req, res, next) => {
+   const method = req.method;
+   const url = req.url;
+   const time = new Date().getFullYear();
+   console.log(method, url, time);
+
+   next();
+};
+
+// se pone como  2do param y express le pasa el 'req', 'res' y 'next', de cada lado donde se cupa
+//            👇
+app.get('/', logger, (req, res) => {
+   res.send('Home');
+});
+
+app.get('/about', logger, (req, res) => {
+   res.send('About');
+});
+
+app.listen(5000, () => {
+   console.log('listening on port 5000...');
+});
+
+/////////////////////////////    /////////////////////////////
+//               ////////////////////////////               //
+///////////////////////////// 🍑 /////////////////////////////
+//               ////////////////////////////               //
+/////////////////////////////    /////////////////////////////
+
+// middleware en otro archivo y ocupandolo en todas las rutas
+// ===============--> logger.js
+
+const logger = (req, res, next) => {
+   const method = req.method;
+   const url = req.url;
+   const time = new Date().getFullYear();
+   console.log(method, url, time);
+
+   next();
+};
+
+module.exports = logger;
+
+// ===============--> app.js
+const express = require('express');
+const app = express();
+const logger = require('./logger');
+
+// para q se ocupe el logger en todas las rutas
+app.use(logger);
+// si se le pasa una ruta
+// app.use('/api',logger);
+// entonces solo se va a aplicar a las q empiecen así
+
+app.get('/', (req, res) => {
+   res.send('Home');
+});
+
+app.get('/about', (req, res) => {
+   res.send('About');
+});
+
+app.listen(5000, () => {
+   console.log('listening on port 5000...');
+});
+
+/////////////////////////////    /////////////////////////////
+//               ////////////////////////////               //
+///////////////////////////// 🍑 /////////////////////////////
+//               ////////////////////////////               //
+/////////////////////////////    /////////////////////////////
