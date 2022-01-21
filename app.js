@@ -3,6 +3,7 @@
 //                 PUT - DELETE + postman
 //=============================================================
 
+/*
 const express = require('express');
 const app = express();
 let { people } = require('./data');
@@ -123,3 +124,25 @@ app.listen(5000, () => {
 // ⭐⭐ hace parse a la data y la pone en "req.body"
 // => donde se hace el POST request, voy a encontrar la data en req.body
 // { extended: false } un parametro para el método de parse, q ya practicamente todos ocupan este
+*/
+
+const express = require('express');
+const app = express();
+const logger = require('./logger');
+const authorize = require('./authorize');
+
+// ⭐⭐ para ocupar todos los middlewares en todas las rutas ( se colocan en un array ), SE EJECUTAN EN EL ORDEN EN Q SE PONEN EN EL ARRAY
+app.use([logger, authorize]);
+
+app.get('/', (req, res) => {
+   res.send('Home');
+});
+
+app.get('/about', (req, res) => {
+   console.log(req.user);
+   res.send('About');
+});
+
+app.listen(5000, () => {
+   console.log('listening on port 5000...');
+});

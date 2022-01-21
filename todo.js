@@ -78,7 +78,7 @@ app.use(express.static('./public'));
 
 // ⭐⭐ como index.html tambien es static, se suele poner tambien en la carpeta public y no hacer "app.get('/',..." de esta manera, sino q se aprovecha el hecho de q por default al hacer un get a '/' se pasa el archivo 'index.html' q este en public. y no se necesita poner un app.get('/',...)
 // app.get('/', (req, res) => {
-// res.sendFile(path.resolve(__dirname, './navbar-app/index.html'));
+//    res.sendFile(path.resolve(__dirname, './navbar-app/index.html'));
 // });
 
 app.all('*', (req, res) => {
@@ -395,12 +395,14 @@ const authorize = require('./authorize');
 // ⭐⭐ para ocupar todos los middlewares en todas las rutas ( se colocan en un array ), SE EJECUTAN EN EL ORDEN EN Q SE PONEN EN EL ARRAY
 app.use([logger, authorize]);
 
+//usando http://localhost:5000/?user=arielox
+
 app.get('/', (req, res) => {
    res.send('Home');
 });
 
 app.get('/about', (req, res) => {
-   console.log(req.user);
+   console.log(req.user); // { name: 'arielox', id: 3 }
    res.send('About');
 });
 
@@ -415,7 +417,7 @@ app.listen(5000, () => {
 /////////////////////////////    /////////////////////////////
 
 //
-//                 METHODS - GET
+//                 METHODS - POST
 //=============================================================
 
 const express = require('express');
@@ -434,7 +436,7 @@ app.get('/api/people', (req, res) => {
 
 //   👇
 app.post('/login', (req, res) => {
-   console.log(req.body); // { name: 'hola' }
+   console.log(req.body); // { name: 'hola' } puse hola en el input
    res.send('POST sended');
 });
 
@@ -444,11 +446,11 @@ app.listen(5000, () => {
 
 // 🔰 pa q al entrar a home ( / ) me mande a la form ( manda directo al archivo index.html del la carpeta )
 
-// 💠
+// 💠 ME PERMITE TENER LO INGRESADO EN EL REQ.BODY
 // ⭐⭐ para tener acceso a la data de la form
 // ⭐⭐ hace parse a la data y la pone en "req.body"
 // => donde se hace el POST request, voy a encontrar la data en req.body
-// { extended: false } un parametro para el método de parse, q ya practicamente todos ocupan este
+// El { extended: false } un parametro para el método de parse, q ya practicamente todos ocupan este
 
 // la form:
 //            👇
@@ -626,9 +628,9 @@ app.post('/login', (req, res) => {
    res.status(401).send('Please Provide Credentials');
 });
 
-// 📌 PUT para modificar
-// la convención es hacerlo con un route parameters
-// recordar el req.params se saca altiro, el req.body hay q usar 💠 ó 💥 de arriba
+// 📌 PUT --> para modificar
+// la convención es hacerlo con un route parameters ( /: )
+// recordar el req.params se saca altiro, el req.body hay q usar 💠 ó 💥
 app.put('/api/people/:id', (req, res) => {
    const { id } = req.params;
    const { name } = req.body;

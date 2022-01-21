@@ -89,7 +89,6 @@
                // esta data es la q mando desde mi app como respuesta al post y es "{ success: true, person: name }"
                result.appendChild(h5);
             } catch (error) {
-               // console.log( error.response )
                formAlert.textContent = error.response.data.msg;
             }
             input.value = '';
