@@ -828,6 +828,148 @@ app.listen(5000, () => {
    console.log('listening on port 5000...');
 });
 
+//
+//                   Express router
+//                     CONTROLLERS
+//             separando las funciones de las rutas
+//=============================================================
+
+// lo mismo anterior pero creo la carpeta 'controllers' y en el archivo 'people.js' meto toda la lógica de las rutas del archivo './routes/people.js'
+
+// ==================================--> app.js
+
+const express = require('express');
+const app = express();
+const people = require('./routes/people');
+const auth = require('./routes/auth');
+
+// static assets
+app.use(express.static('./methods-public'));
+// parse form data
+app.use(express.urlencoded({ extended: false }));
+// parse form json
+app.use(express.json());
+
+// @@@@@@@@@@@@ RUTAS @@@@@@@@@@@@
+// esto define el comienzo del path para todas las rutas de './routes/people'
+// en people puse las rutas q empiezan con '/api/people'
+// para ocupar 'people' en las rutas q empiezan con '/api/people'
+app.use('/api/people', people);
+
+app.use('/login', auth);
+
+// @@@@@@@@@@ FIN RUTAS @@@@@@@@@@
+
+app.listen(5000, () => {
+   console.log('listening on port 5000...');
+});
+
+// ==================================--> ./routes/people.js
+const express = require('express');
+const router = express.Router(); // en lugar de "app = express()"
+const {
+   getPeople,
+   createPerson,
+   createPersonPostman,
+   updatePerson,
+   deletePerson,
+} = require('../controllers/people');
+
+// como en app.js tengo "app.use('/api/people', people);" => todas las rutas q se pidan empezando con '/api/people' las van a agarrar de acá, => x default, todas estas ya empiezan con '/api/people', X ESO EN LA RUTA QUITO ESTA PARTE Y  DEJO SOLO EL RESTO
+// router.get('/', getPeople);
+// router.post('/', createPerson);
+// router.post('/postman', createPersonPostman);
+// router.put('/:id', updatePerson);
+// router.delete('/:id', deletePerson);
+
+// otra forma de definir las rutas ( EL RESULTADO ES EL MISMO )
+router.route('/').get(getPeople).post(createPerson);
+router.route('/postman').post(createPersonPostman);
+router.route('/:id').put(updatePerson).delete(deletePerson);
+
+module.exports = router;
+
+// ==================================--> ./controllers/people.js
+let { people } = require('../data');
+
+const getPeople = (req, res) => {
+   res.status(200).json({ success: true, data: people });
+};
+
+const createPerson = (req, res) => {
+   const { name } = req.body;
+   console.log(req.body); // { name: 'pepi' }
+
+   if (!name) {
+      return res.status(400).json({
+         success: false,
+         msg: 'please provide name value',
+      });
+   }
+
+   res.status(201).json({ success: true, person: name });
+};
+
+const createPersonPostman = (req, res) => {
+   const { name } = req.body;
+
+   if (!name) {
+      return res.status(400).json({
+         success: false,
+         msg: 'please provide a name value',
+      });
+   }
+
+   res.status(201).json({ success: true, data: [...people, name] });
+};
+
+const updatePerson = (req, res) => {
+   const { id } = req.params;
+   const { name } = req.body;
+
+   const person = people.find(person => person.id === Number(id));
+
+   if (!person) {
+      return res.status(404).json({
+         success: false,
+         msg: `We could not find any person with id: ${id}`,
+      });
+   }
+
+   const newPerson = people.map(person => {
+      if (person.id === Number(id)) {
+         person.name = name;
+      }
+      return person;
+   });
+
+   res.status(200).json({ success: true, data: newPerson });
+};
+
+const deletePerson = (req, res) => {
+   const person = people.find(person => person.id === Number(req.params.id));
+
+   if (!person) {
+      return res.status(404).json({
+         success: false,
+         msg: `We could not find any person with id: ${req.params.id}`,
+      });
+   }
+
+   const newPeople = people.filter(
+      person => person.id !== Number(req.params.id)
+   );
+   return res.status(200).json({ success: true, data: newPeople });
+};
+
+module.exports = {
+   getPeople,
+   createPerson,
+   createPersonPostman,
+   updatePerson,
+   deletePerson,
+};
+
 /////////////////////////////    /////////////////////////////
 //               ////////////////////////////               //
 ///////////////////////////// 🍑 /////////////////////////////
